@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2563eb">
+<title>เช็คเครื่องฟอกไตประจำวัน</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+[hidden]{display:none!important}
+:root{--ok:#16a34a;--ok-bg:#dcfce7;--warn:#d97706;--warn-bg:#fef3c7;--bad:#dc2626;--bad-bg:#fee2e2;--pri:#2563eb;--bg:#f1f5f9;--line:#e2e8f0;--mut:#64748b;--txt:#0f172a}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'Sarabun',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--txt);font-size:17px;line-height:1.45;-webkit-tap-highlight-color:transparent;padding-bottom:env(safe-area-inset-bottom)}
+header{background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px #0002}
+.htop{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 4px;max-width:960px;margin:auto}
+.ttl{font-size:20px;font-weight:700}.sub{font-size:14px;opacity:.85}
+.hbtn{background:#fff3;border:0;color:#fff;font-size:22px;width:44px;height:44px;border-radius:12px}
+nav{display:flex;max-width:960px;margin:auto;padding:0 8px}
+.tab{flex:1;background:none;border:0;color:#fff;opacity:.7;font:inherit;font-weight:600;padding:10px 4px 12px;border-bottom:3px solid transparent}
+.tab.active{opacity:1;border-color:#fff}
+main{max-width:960px;margin:auto;padding:12px}
+.card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px #0001}
+h2{font-size:18px;margin:0 0 12px}h3{font-size:16px;margin:0 0 10px}
+label{display:block;font-weight:600;font-size:15px;margin-bottom:10px}
+.lbl{font-weight:600;font-size:15px;margin-bottom:6px}
+input,select,textarea{display:block;width:100%;margin-top:4px;font:inherit;font-weight:400;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;min-height:46px;color:var(--txt)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pri)}
+input[type=checkbox]{width:22px;height:22px;min-height:0;display:inline-block;margin:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 10px}
+@media(max-width:520px){.grid2{grid-template-columns:1fr}}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.mbtn{position:relative;text-align:left;background:#f8fafc;border:2px solid var(--line);border-radius:14px;padding:12px;font:inherit;display:flex;flex-direction:column;gap:2px;color:var(--txt)}
+.mbtn b{font-size:17px;padding-right:18px}.mbtn small{font-size:13px;color:var(--mut)}
+.mbtn.sel{border-color:var(--pri);background:#eff6ff;box-shadow:0 0 0 3px #2563eb33}
+.mbtn .dot{position:absolute;top:15px;right:12px}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:#cbd5e1;flex:none}
+.dot.ok{background:var(--ok)}.dot.warn{background:var(--warn)}.dot.bad{background:var(--bad)}
+small.okt{color:var(--ok)!important;font-weight:600}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+@media(max-width:520px){.sgrid{grid-template-columns:1fr}}
+.sbtn{font:inherit;font-weight:700;padding:14px 8px;border-radius:14px;border:2px solid var(--line);background:#fff;min-height:70px;line-height:1.4}
+.sbtn.ok{color:var(--ok)}.sbtn.warn{color:var(--warn)}.sbtn.bad{color:var(--bad)}
+.sbtn.ok.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.sbtn.warn.on{background:var(--warn);border-color:var(--warn);color:#fff}
+.sbtn.bad.on{background:var(--bad);border-color:var(--bad);color:#fff}
+.selname{font-size:20px;font-weight:700}.selname small{font-size:14px;color:var(--mut);font-weight:400}
+.mut{color:var(--mut);font-size:14px}
+.err{color:var(--bad)}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:700;background:#e2e8f0}
+.badge.ok{background:var(--ok-bg);color:var(--ok)}.badge.warn{background:var(--warn-bg);color:var(--warn)}.badge.bad{background:var(--bad-bg);color:var(--bad)}
+.note{font-weight:600}.note.ok{background:var(--ok-bg);color:#166534}.note.bad{background:var(--bad-bg);color:#991b1b}
+details summary{font-weight:700;cursor:pointer;padding:4px 0;list-style:none}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:'▸ '}details[open] summary::before{content:'▾ '}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.cat{margin:16px 0 6px;font-weight:700;color:var(--pri);font-size:15px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.item{padding:10px;border-radius:12px;margin-bottom:6px;background:#f8fafc}
+.item.abn{background:var(--bad-bg)}
+.q{margin-bottom:8px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{font:inherit;padding:8px 16px;border-radius:10px;border:1.5px solid var(--line);background:#fff;min-height:44px;min-width:80px;color:var(--txt)}
+.opt.on{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:700}
+.opt.on.bad{background:var(--bad);border-color:var(--bad)}
+.numrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.numrow input{max-width:160px;margin:0}
+.radios{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.radios label{margin:0;flex:1;min-width:100px;position:relative}
+.radios input{position:absolute;opacity:0}
+.radios span{display:block;text-align:center;padding:11px 6px;border:1.5px solid var(--line);border-radius:10px;font-weight:600}
+.radios input:checked+span{background:var(--pri);color:#fff;border-color:var(--pri)}
+.btn{font:inherit;font-weight:600;padding:10px 16px;border-radius:10px;border:1.5px solid var(--line);background:#fff;min-height:44px;color:var(--txt)}
+.btn.sm{padding:6px 12px;min-height:36px;font-size:14px}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.btn.big{width:100%;padding:14px;font-size:18px;margin-top:6px}
+.hist{border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px;font-size:14px}
+.hist.main{border:2px solid #fcd34d;background:#fffbeb;font-size:15px}
+.histhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;flex-wrap:wrap}
+.kv{display:flex;gap:10px;padding:4px 0;border-bottom:1px dashed #e5e7eb}
+.kv span{color:var(--mut);min-width:110px;flex:none}.kv b{font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}
+@media(max-width:600px){.kpis{grid-template-columns:repeat(3,1fr)}}
+.kpi{background:#fff;border-radius:14px;padding:12px 6px;text-align:center;box-shadow:0 1px 3px #0001}
+.kpi b{display:block;font-size:26px}.kpi span{font-size:13px;color:var(--mut)}
+.kpi.ok b{color:var(--ok)}.kpi.warn b{color:var(--warn)}.kpi.bad b{color:var(--bad)}
+.srow{background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 3px #0001;border-left:5px solid var(--ok)}
+.srow.unchk{border-left-color:var(--bad)}
+.shead{display:flex;align-items:center;gap:8px}.shead small{color:var(--mut)}
+.sp{flex:1}
+.tag{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.tag.ok{background:var(--ok-bg);color:var(--ok)}.tag.bad{background:var(--bad-bg);color:var(--bad)}
+.sbody{margin-top:6px}.sdet{margin-top:6px;font-size:14px;background:#f8fafc;border-radius:8px;padding:8px}
+.subtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.subtab{font:inherit;font-weight:600;padding:8px 14px;border-radius:999px;border:0;background:#e2e8f0;color:var(--txt)}
+.subtab.active{background:var(--pri);color:#fff}.subtab.out{margin-left:auto;background:var(--bad-bg);color:var(--bad)}
+.aitem{border:1.5px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.aitem.off{opacity:.55}
+.arow{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.chk{display:flex;align-items:center;gap:6px;margin:0;font-weight:400}
+.ibtn{font:inherit;width:40px;height:40px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--txt)}
+.ibtn.del{color:var(--bad)}
+.urow{display:flex;gap:8px;margin-bottom:8px;align-items:center}.urow input{margin:0}
+.savebar{position:sticky;bottom:0;background:#fff;padding:10px 0 4px;display:flex;gap:8px;border-top:1px solid var(--line)}
+.savebar .btn{flex:1}
+#loading{position:fixed;inset:0;background:#fff9;display:none;align-items:center;justify-content:center;z-index:50}
+#loading.show{display:flex}
+.spin{width:44px;height:44px;border:4px solid #cbd5e1;border-top-color:var(--pri);border-radius:50%;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,150px);background:#0f172a;color:#fff;padding:12px 18px;border-radius:12px;z-index:60;transition:.3s;max-width:90%;text-align:center}
+.toast.show{transform:translate(-50%,0)}
+.toast.err{background:var(--bad)}
+</style>
+</head>
+<body>
+<header>
+  <div class="htop">
+    <div><div class="ttl">🩺 เช็คเครื่องฟอกไตประจำวัน</div><div class="sub" id="today"></div></div>
+    <button class="hbtn" onclick="loadAll()" title="รีเฟรช">⟳</button>
+  </div>
+  <nav>
+    <button class="tab active" data-tab="check" onclick="showTab('check')">บันทึกเช็ค</button>
+    <button class="tab" data-tab="summary" onclick="showTab('summary')">ภาพรวมวันนี้</button>
+    <button class="tab" data-tab="admin" onclick="showTab('admin')">ผู้ดูแล</button>
+  </nav>
+</header>
+
+<main>
+<!-- ============ บันทึกเช็ค ============ -->
+<section class="view" id="view-check">
+  <div class="card">
+    <div class="grid2">
+      <label>ผู้บันทึก<select id="recorder"></select></label>
+      <label>กะ<select id="shift"><option>เช้า</option><option>บ่าย</option><option>ดึก</option></select></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>1. เลือกเครื่อง</h2>
+    <div class="mgrid" id="machineGrid"><div class="mut">กำลังโหลด...</div></div>
+  </div>
+
+  <div class="card" id="stepStatus" hidden>
+    <h2>2. สถานะเครื่อง</h2>
+    <div id="selInfo"></div>
+    <div class="sgrid" id="statusBtns"></div>
+  </div>
+
+  <div id="stepDetail" hidden>
+    <div class="card note ok" id="readyNote">✅ ระบบจะบันทึกทุกข้อเป็น "ปกติ" ให้อัตโนมัติ หากต้องการบันทึกค่า Conductivity หรืออุณหภูมิ หรือแก้ไขบางข้อ ให้แตะ "รายการตรวจ" ด้านล่าง</div>
+
+    <div class="card" id="historyBox" hidden></div>
+
+    <div class="card">
+      <details id="checkDetails">
+        <summary id="checkSumm">รายการตรวจ</summary>
+        <div class="tools"><button class="btn sm" onclick="allNormal()">✓ ตั้งทุกข้อเป็นค่าปกติ</button></div>
+        <div id="checkList"></div>
+      </details>
+    </div>
+
+    <div class="card" id="issueBox" hidden>
+      <h2>3. ข้อมูลปัญหา / การแจ้งซ่อม</h2>
+      <label>อาการ / สาเหตุ *<textarea id="cause" rows="3" placeholder="เช่น Conductivity alarm ขึ้นบ่อย, Blood pump มีเสียงดัง"></textarea></label>
+      <div class="lbl">แจ้งช่างแล้วหรือยัง *</div>
+      <div class="radios">
+        <label><input type="radio" name="notified" value="ยังไม่แจ้ง" onchange="onNotify()"><span>ยังไม่แจ้ง</span></label>
+        <label><input type="radio" name="notified" value="แจ้งแล้ว" onchange="onNotify()"><span>แจ้งแล้ว</span></label>
+        <label><input type="radio" name="notified" value="ไม่ต้องแจ้ง" onchange="onNotify()"><span>ไม่ต้องแจ้ง</span></label>
+      </div>
+      <div class="grid2">
+        <label>วันที่แจ้งช่าง<input type="date" id="notifyDate"></label>
+        <label>ช่าง / บริษัท<input id="tech" placeholder="ชื่อช่าง หรือบริษัท"></label>
+      </div>
+      <label>สถานะการซ่อม<select id="repair"></select></label>
+    </div>
+
+    <div class="card">
+      <label>หมายเหตุ<textarea id="note" rows="2"></textarea></label>
+      <button class="btn big pri" onclick="submitLog()">💾 บันทึก</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ภาพรวม ============ -->
+<section class="view" id="view-summary" hidden>
+  <div class="mut" id="sumDate" style="margin-bottom:8px"></div>
+  <div class="kpis" id="kpis"></div>
+  <div id="sumList"></div>
+</section>
+
+<!-- ============ ผู้ดูแล ============ -->
+<section class="view" id="view-admin" hidden>
+  <div class="card" id="admLogin">
+    <h2>🔒 เข้าสู่ระบบผู้ดูแล</h2>
+    <label>User<input id="admUser" autocomplete="username" autocapitalize="off" autocorrect="off"></label>
+    <label>Password<input id="admPass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')admLogin()"></label>
+    <button class="btn pri big" onclick="admLogin()">เข้าสู่ระบบ</button>
+  </div>
+
+  <div id="admPanel" hidden>
+    <div class="subtabs">
+      <button class="subtab" data-sub="check" onclick="admSub('check')">Checklist</button>
+      <button class="subtab" data-sub="mach" onclick="admSub('mach')">รายการเครื่อง</button>
+      <button class="subtab" data-sub="users" onclick="admSub('users')">ผู้บันทึก</button>
+      <button class="subtab out" onclick="admLogout()">ออกจากระบบ</button>
+    </div>
+
+    <div class="card" id="adm-check">
+      <div class="grid2">
+        <label>รุ่นเครื่อง<select id="admModel" onchange="pickModel(this.value)"></select></label>
+        <label>คัดลอกรายการ<select id="admCopyFrom" onchange="admCopy(this.value)"></select></label>
+      </div>
+      <div class="mut" style="margin-bottom:10px">คำตอบปกติใส่ได้หลายค่าโดยคั่นด้วยเครื่องหมาย , | ช่อง "เฉพาะเครื่องที่มี (etc)" เช่น oCm หมายถึงให้แสดงข้อนี้เฉพาะเครื่องที่ช่อง etc มีคำว่า oCm</div>
+      <div id="admItems"></div>
+      <div class="savebar">
+        <button class="btn" onclick="admAdd()">＋ เพิ่มข้อ</button>
+        <button class="btn pri" onclick="admSaveCheck()">💾 บันทึก Checklist</button>
+      </div>
+    </div>
+
+    <div class="card" id="adm-mach" hidden>
+      <div id="admMachList"></div>
+      <datalist id="provList"><option>Fresenius Medical Care</option><option>NIKKISO</option></datalist>
+      <div class="savebar">
+        <button class="btn" onclick="A.machines.push({code:'',no:'',provider:'',model:'',etc:''});renderAdmMachines()">＋ เพิ่มเครื่อง</button>
+        <button class="btn pri" onclick="admSaveMachines()">💾 บันทึกรายการเครื่อง</button>
+      </div>
+    </div>
+
+    <div class="card" id="adm-users" hidden>
+      <div id="admUserList"></div>
+      <div class="savebar">
+        <button class="btn" onclick="A.users.push('');renderAdmUsers()">＋ เพิ่มชื่อ</button>
+        <button class="btn pri" onclick="admSaveUsers()">💾 บันทึกรายชื่อ</button>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<div id="loading"><div class="spin"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ======== ตั้งค่า: วาง URL ของ Apps Script Web App ตรงนี้ ======== */
+const API_URL = 'https://script.google.com/macros/s/AKfycbw8FwmjdpC7UeolOtd6uRwBcJ8oF5fP-l8zDc17haIlh1bpzvSU3Bh8vMTu_QDnVDWo/exec';
+
+const ST = [
+  { key: 'ready',   label: 'พร้อมใช้งาน',          cls: 'ok',   icon: '✅' },
+  { key: 'limited', label: 'ใช้ได้แบบมีข้อจำกัด',   cls: 'warn', icon: '⚠️' },
+  { key: 'down',    label: 'ไม่พร้อมใช้งาน',        cls: 'bad',  icon: '⛔' }
+];
+const REPAIR = ['รอช่างตรวจ', 'กำลังซ่อม', 'รออะไหล่', 'ซ่อมเสร็จ - รอทดสอบ', 'งดใช้ถาวร'];
+const S = { machines: [], users: [], checklist: [], summary: null, sel: null, status: null, items: [], ans: {}, history: [], histCode: null };
+const A = { cred: null, loaded: false, machines: [], users: [], checklist: [], model: '', items: [], sub: 'check' };
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const stCls = l => (ST.find(s => s.label === l) || { cls: 'none' }).cls;
+const splitOpts = s => String(s || '').split(',').map(x => x.trim()).filter(Boolean);
+const normals = it => splitOpts(it.normal);
+const isoToday = () => { const d = new Date(); return new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
+
+/* ---------- API ---------- */
+async function api(params, post) {
+  const r = post
+    ? await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(params) })
+    : await fetch(API_URL + '?' + new URLSearchParams(params));
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error || 'เกิดข้อผิดพลาด');
+  return j;
+}
+function loading(on) { $('loading').classList.toggle('show', on); }
+function toast(msg, err) {
+  const t = $('toast'); t.textContent = msg; t.className = 'toast show' + (err ? ' err' : '');
+  clearTimeout(t._h); t._h = setTimeout(() => t.className = 'toast', 3200);
+}
+
+/* ---------- Tabs ---------- */
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('.view').forEach(v => v.hidden = v.id !== 'view-' + name);
+  if (name === 'summary') renderSummary();
+  if (name === 'admin') renderAdminGate();
+  window.scrollTo(0, 0);
+}
+
+/* ---------- Load ---------- */
+async function loadAll() {
+  loading(true);
+  try {
+    const [d, s] = await Promise.all([api({ action: 'init' }), api({ action: 'summary' })]);
+    S.machines = d.machines; S.users = d.users; S.checklist = d.checklist; S.summary = s;
+    renderRecorders(); renderMachines(); renderSummary();
+    if (S.sel) {
+      const i = S.machines.findIndex(m => m.code === S.sel.code);
+      i >= 0 ? selectMachine(i, true) : resetForm();
+    }
+  } catch (e) { toast(e.message, true); }
+  finally { loading(false); }
+}
+function defaultShift() { const h = new Date().getHours(); return h >= 8 && h < 16 ? 'เช้า' : (h >= 16 ? 'บ่าย' : 'ดึก'); }
+function renderRecorders() {
+  const cur = $('recorder').value || localStorage.getItem('recorder') || '';
+  $('recorder').innerHTML = '<option value="">-- เลือกชื่อผู้บันทึก --</option>' +
+    S.users.map(u => `<option ${u === cur ? 'selected' : ''}>${esc(u)}</option>`).join('');
+}
+const lastOf = code => (S.summary?.items || []).find(x => x.code === code);
+
+function renderMachines() {
+  if (!S.machines.length) { $('machineGrid').innerHTML = '<div class="mut">ยังไม่มีรายการเครื่อง</div>'; return; }
+  $('machineGrid').innerHTML = S.machines.map((m, i) => {
+    const s = lastOf(m.code), cls = s?.last ? stCls(s.last.status) : 'none', today = s?.checkedToday;
+    return `<button class="mbtn ${S.sel?.code === m.code ? 'sel' : ''}" onclick="selectMachine(${i})">
+      <span class="dot ${cls}"></span><b>${esc(m.code)}</b>
+      <small>${esc(m.model)}${m.etc ? ' · ' + esc(m.etc) : ''}</small>
+      <small class="${today ? 'okt' : ''}">${today ? '✓ เช็ควันนี้แล้ว' : 'ยังไม่เช็ควันนี้'}</small></button>`;
+  }).join('');
+}
+
+/* ---------- เลือกเครื่อง / สถานะ ---------- */
+function selectMachine(i, keep) {
+  const m = S.machines[i];
+  const changed = S.sel?.code !== m.code;
+  S.sel = m;
+  S.items = S.checklist.filter(c => c.model === m.model &&
+    (!c.cond || (m.etc || '').toLowerCase().includes(c.cond.toLowerCase())));
+  if (changed || !keep) { S.status = null; S.ans = {}; S.histCode = null; resetIssue(); $('stepDetail').hidden = true; }
+  renderMachines();
+  const s = lastOf(m.code);
+  $('selInfo').innerHTML = `<div class="selname">${esc(m.code)} <small>${esc(m.provider)} · ${esc(m.model)} ${esc(m.etc)}</small></div>` +
+    (s?.last ? `<div class="mut">สถานะล่าสุด: <span class="badge ${stCls(s.last.status)}">${esc(s.last.status)}</span> ${esc(s.last.time)} โดย ${esc(s.last.recorder)}</div>`
+             : '<div class="mut">ยังไม่เคยมีการบันทึก</div>');
+  $('stepStatus').hidden = false;
+  renderStatusBtns();
+  if (S.status) renderChecklist();
+  if (!keep) $('stepStatus').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function renderStatusBtns() {
+  $('statusBtns').innerHTML = ST.map(s =>
+    `<button class="sbtn ${s.cls} ${S.status === s.key ? 'on' : ''}" onclick="setStatus('${s.key}')">${s.icon}<br>${s.label}</button>`).join('');
+}
+function setStatus(k) {
+  const prev = S.status;
+  S.status = k;
+  const ready = k === 'ready';
+  if (ready || prev === 'ready' || !prev) {
+    S.ans = {};
+    if (ready) S.items.forEach((it, i) => { if (it.type === 'choice' && normals(it)[0]) S.ans[i] = normals(it)[0]; });
+  }
+  renderStatusBtns();
+  $('stepDetail').hidden = false;
+  $('readyNote').hidden = !ready;
+  $('issueBox').hidden = ready;
+  $('historyBox').hidden = ready;
+  $('checkDetails').open = !ready;
+  $('checkSumm').textContent = ready
+    ? `รายการตรวจ ${S.items.length} ข้อ (บันทึกเป็น "ปกติ" ทั้งหมด) แตะเพื่อดูหรือแก้ไข`
+    : `รายการตรวจ ${S.items.length} ข้อ (กรุณาระบุผลทุกข้อ)`;
+  renderChecklist();
+  if (!ready) loadHistory();
+  $('stepDetail').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ---------- ประวัติล่าสุด ---------- */
+async function loadHistory() {
+  const code = S.sel.code;
+  if (S.histCode === code) { renderHistory(); return; }
+  $('historyBox').innerHTML = '<div class="mut">กำลังโหลดบันทึกล่าสุด...</div>';
+  try {
+    const r = await api({ action: 'history', code, limit: 3 });
+    if (S.sel?.code !== code) return;
+    S.history = r.history; S.histCode = code; renderHistory();
+  } catch (e) { $('historyBox').innerHTML = '<div class="err">' + esc(e.message) + '</div>'; }
+}
+function renderHistory() {
+  const h = S.history, box = $('historyBox');
+  if (!h.length) { box.innerHTML = '<h3>📋 บันทึกล่าสุดของเครื่องนี้</h3><div class="mut">ยังไม่มีประวัติการบันทึก</div>'; return; }
+  const L = h[0];
+  const row = (k, v) => v ? `<div class="kv"><span>${k}</span><b>${esc(v).replace(/\n/g, '<br>')}</b></div>` : '';
+  box.innerHTML = `<h3>📋 บันทึกล่าสุดของเครื่องนี้</h3>
+    <div class="hist main">
+      <div class="histhead"><span class="badge ${stCls(L.status)}">${esc(L.status)}</span><span>${esc(L.time)}${L.shift ? ' (กะ' + esc(L.shift) + ')' : ''}</span></div>
+      ${row('ผู้บันทึก', L.recorder)}${row('ข้อที่ผิดปกติ', L.abnormal)}${row('อาการ/สาเหตุ', L.cause)}
+      ${row('แจ้งช่าง', L.notified)}${row('วันที่แจ้งช่าง', L.notifyDate)}${row('ช่าง/บริษัท', L.technician)}
+      ${row('สถานะการซ่อม', L.repairStatus)}${row('หมายเหตุ', L.note)}
+      ${(L.cause || L.notified || L.technician || L.repairStatus) ? '<div class="tools"><button class="btn sm" onclick="copyIssue()">↻ ใช้ข้อมูลแจ้งซ่อมจากครั้งนี้</button></div>' : ''}
+    </div>
+    ${h.slice(1).map(x => `<div class="hist"><span class="badge ${stCls(x.status)}">${esc(x.status)}</span> ${esc(x.time)} · ${esc(x.recorder)}${x.cause ? ' · ' + esc(x.cause) : ''}${x.repairStatus ? ' · ' + esc(x.repairStatus) : ''}</div>`).join('')}`;
+}
+function copyIssue() {
+  const L = S.history[0]; if (!L) return;
+  $('cause').value = L.cause || '';
+  document.querySelectorAll('input[name=notified]').forEach(r => r.checked = r.value === L.notified);
+  $('notifyDate').value = /^\d{4}-\d{2}-\d{2}$/.test(L.notifyDateISO) ? L.notifyDateISO : '';
+  $('tech').value = L.technician || '';
+  $('repair').value = REPAIR.includes(L.repairStatus) ? L.repairStatus : '';
+  toast('คัดลอกข้อมูลแล้ว แก้ไขให้ตรงกับปัจจุบันได้');
+}
+function onNotify() {
+  const v = (document.querySelector('input[name=notified]:checked') || {}).value;
+  if (v === 'แจ้งแล้ว' && !$('notifyDate').value) $('notifyDate').value = isoToday();
+  if (v === 'แจ้งแล้ว' && !$('repair').value) $('repair').value = REPAIR[0];
+}
+function resetIssue() {
+  ['cause', 'notifyDate', 'tech', 'note'].forEach(id => $(id).value = '');
+  $('repair').value = '';
+  document.querySelectorAll('input[name=notified]').forEach(r => r.checked = false);
+}
+
+/* ---------- Checklist ---------- */
+function isAbn(it, v) {
+  if (v === '' || v == null) return false;
+  if (it.type === 'choice') { const n = normals(it); return n.length > 0 && !n.includes(v); }
+  if (it.type === 'number') {
+    const n = Number(v); if (isNaN(n)) return false;
+    return (it.min !== '' && n < Number(it.min)) || (it.max !== '' && n > Number(it.max));
+  }
+  return false;
+}
+function renderChecklist() {
+  if (!S.items.length) {
+    $('checkList').innerHTML = `<div class="mut">ยังไม่มีรายการตรวจสำหรับรุ่น ${esc(S.sel.model)} (เพิ่มได้ที่หน้าผู้ดูแล)</div>`; return;
+  }
+  let html = '', cat = null;
+  S.items.forEach((it, i) => {
+    if (it.cat !== cat) { cat = it.cat; html += `<div class="cat">${esc(cat || 'อื่น ๆ')}</div>`; }
+    const v = S.ans[i] ?? '';
+    html += `<div class="item ${isAbn(it, v) ? 'abn' : ''}"><div class="q">${esc(it.q)}</div>`;
+    if (it.type === 'choice') {
+      html += '<div class="opts">' + splitOpts(it.options).map(o =>
+        `<button type="button" class="opt ${v === o ? (isAbn(it, o) ? 'on bad' : 'on') : ''}" data-v="${esc(o)}" onclick="setAns(${i},this.dataset.v)">${esc(o)}</button>`).join('') + '</div>';
+    } else if (it.type === 'number') {
+      const rng = (it.min !== '' || it.max !== '') ? `ช่วงปกติ ${it.min !== '' ? it.min : '?'}–${it.max !== '' ? it.max : '?'} ${esc(it.options)}` : esc(it.options);
+      html += `<div class="numrow"><input type="number" inputmode="decimal" step="any" value="${esc(v)}" placeholder="ไม่บังคับ" oninput="setNum(${i},this)"><span class="mut">${rng}</span></div>`;
+    } else {
+      html += `<input type="text" value="${esc(v)}" oninput="S.ans[${i}]=this.value">`;
+    }
+    html += '</div>';
+  });
+  $('checkList').innerHTML = html;
+}
+function setAns(i, v) { S.ans[i] = S.ans[i] === v ? '' : v; renderChecklist(); }
+function setNum(i, el) { S.ans[i] = el.value; el.closest('.item').classList.toggle('abn', isAbn(S.items[i], el.value)); }
+function allNormal() { S.items.forEach((it, i) => { if (it.type === 'choice' && normals(it)[0]) S.ans[i] = normals(it)[0]; }); renderChecklist(); }
+
+/* ---------- Submit ---------- */
+async function submitLog() {
+  const rec = $('recorder').value;
+  if (!rec) { $('recorder').focus(); return toast('กรุณาเลือกชื่อผู้บันทึก', true); }
+  if (!S.sel) return toast('กรุณาเลือกเครื่อง', true);
+  if (!S.status) return toast('กรุณาเลือกสถานะเครื่อง', true);
+  const ready = S.status === 'ready';
+  const answers = S.items.map((it, i) => {
+    let v = S.ans[i] ?? '';
+    if (ready && it.type === 'choice' && v === '') v = normals(it)[0] || '';
+    return { cat: it.cat, q: it.q, value: String(v), abnormal: isAbn(it, v) };
+  });
+  const issue = {
+    cause: $('cause').value.trim(),
+    notified: (document.querySelector('input[name=notified]:checked') || {}).value || '',
+    notifyDate: $('notifyDate').value, technician: $('tech').value.trim(), repairStatus: $('repair').value
+  };
+  if (!ready) {
+    const miss = S.items.filter((it, i) => it.type === 'choice' && !S.ans[i]).length;
+    if (miss) { $('checkDetails').open = true; return toast(`ยังไม่ได้ระบุผลอีก ${miss} ข้อ`, true); }
+    if (!issue.cause) { $('cause').focus(); return toast('กรุณาระบุอาการ/สาเหตุ', true); }
+    if (!issue.notified) return toast('กรุณาระบุว่าแจ้งช่างแล้วหรือยัง', true);
+  } else if (answers.some(a => a.abnormal)) {
+    if (!confirm('มีบางข้อผิดปกติ แต่เลือกสถานะ "พร้อมใช้งาน" ยืนยันบันทึกหรือไม่?')) return;
+  }
+  const data = {
+    code: S.sel.code, shift: $('shift').value, recorder: rec,
+    status: ST.find(s => s.key === S.status).label, note: $('note').value.trim(), answers,
+    ...(ready ? {} : issue)
+  };
+  loading(true);
+  try {
+    await api({ action: 'submit', data }, true);
+    localStorage.setItem('recorder', rec);
+    toast('✓ บันทึก ' + S.sel.code + ' เรียบร้อย');
+    resetForm();
+    S.summary = await api({ action: 'summary' });
+    renderMachines(); renderSummary();
+  } catch (e) { toast(e.message, true); }
+  finally { loading(false); }
+}
+function resetForm() {
+  S.sel = null; S.status = null; S.ans = {}; S.histCode = null;
+  $('stepStatus').hidden = true; $('stepDetail').hidden = true;
+  resetIssue(); renderMachines(); window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ---------- Summary ---------- */
+function renderSummary() {
+  const s = S.summary; if (!s) return;
+  const it = s.items, n = it.length;
+  const checked = it.filter(x => x.checkedToday).length;
+  const cnt = l => it.filter(x => x.last && x.last.status === l).length;
+  const notYet = it.filter(x => x.last && x.last.status !== 'พร้อมใช้งาน' && x.last.notified === 'ยังไม่แจ้ง').length;
+  $('sumDate').textContent = 'ข้อมูล ณ ' + new Date(s.today + 'T00:00:00').toLocaleDateString('th-TH', { dateStyle: 'full' }) + ' (สถานะคือผลบันทึกล่าสุดของแต่ละเครื่อง)';
+  $('kpis').innerHTML = [
+    ['เช็ควันนี้', `${checked}/${n}`, checked < n ? 'bad' : 'ok'],
+    ['พร้อมใช้งาน', cnt('พร้อมใช้งาน'), 'ok'],
+    ['มีข้อจำกัด', cnt('ใช้ได้แบบมีข้อจำกัด'), 'warn'],
+    ['ไม่พร้อมใช้', cnt('ไม่พร้อมใช้งาน'), 'bad'],
+    ['ยังไม่แจ้งช่าง', notYet, notYet ? 'bad' : '']
+  ].map(([l, v, c]) => `<div class="kpi ${c}"><b>${v}</b><span>${l}</span></div>`).join('');
+  $('sumList').innerHTML = it.map(x => {
+    const L = x.last;
+    return `<div class="srow ${x.checkedToday ? '' : 'unchk'}">
+      <div class="shead"><span class="dot ${L ? stCls(L.status) : 'none'}"></span><b>${esc(x.code)}</b><small>${esc(x.model)}</small><span class="sp"></span>
+      ${x.checkedToday ? '<span class="tag ok">✓ เช็คแล้ว</span>' : '<span class="tag bad">ยังไม่เช็ค</span>'}</div>
+      ${L ? `<div class="sbody"><span class="badge ${stCls(L.status)}">${esc(L.status)}</span> <span class="mut">${esc(L.time)} · ${esc(L.recorder)}</span>
+        ${L.status !== 'พร้อมใช้งาน' ? `<div class="sdet">${L.cause ? 'สาเหตุ: ' + esc(L.cause) + '<br>' : ''}แจ้งช่าง: ${esc(L.notified || '-')}${L.notifyDate ? ' (' + esc(L.notifyDate) + ')' : ''}${L.technician ? ' · ' + esc(L.technician) : ''}<br>การซ่อม: ${esc(L.repairStatus || '-')}</div>` : ''}</div>`
+        : '<div class="sbody mut">ยังไม่มีประวัติ</div>'}
+    </div>`;
+  }).join('');
+}
+
+/* ---------- Admin ---------- */
+function renderAdminGate() {
+  if (!A.cred) { const c = sessionStorage.getItem('adm'); if (c) A.cred = JSON.parse(c); }
+  $('admLogin').hidden = !!A.cred; $('admPanel').hidden = !A.cred;
+  if (A.cred && !A.loaded) loadAdmin();
+}
+async function admLogin() {
+  const cred = { user: $('admUser').value.trim(), pass: $('admPass').value };
+  if (!cred.user || !cred.pass) return toast('กรุณากรอก User และ Password', true);
+  loading(true);
+  try {
+    await api({ action: 'login', ...cred }, true);
+    A.cred = cred; sessionStorage.setItem('adm', JSON.stringify(cred)); $('admPass').value = '';
+    renderAdminGate();
+  } catch (e) { toast(e.message, true); }
+  finally { loading(false); }
+}
+function admLogout() { A.cred = null; A.loaded = false; sessionStorage.removeItem('adm'); renderAdminGate(); }
+async function loadAdmin() {
+  loading(true);
+  try {
+    const r = await api({ action: 'adminData', ...A.cred }, true);
+    A.machines = r.machines; A.users = r.users; A.checklist = r.checklist; A.loaded = true;
+    const ms = allModels();
+    pickModel(ms.includes(A.model) ? A.model : (ms[0] || ''));
+    renderAdmMachines(); renderAdmUsers(); admSub(A.sub);
+  } catch (e) { toast(e.message, true); if (/รหัสผ่าน/.test(e.message)) admLogout(); }
+  finally { loading(false); }
+}
+const allModels = () => [...new Set([...A.machines.map(m => m.model), ...A.checklist.map(c => c.model)].filter(Boolean))];
+function admSub(n) {
+  A.sub = n;
+  document.querySelectorAll('.subtab[data-sub]').forEach(b => b.classList.toggle('active', b.dataset.sub === n));
+  ['check', 'mach', 'users'].forEach(k => $('adm-' + k).hidden = k !== n);
+}
+
+/* Checklist editor */
+function pickModel(m) {
+  A.model = m;
+  A.items = A.checklist.filter(c => c.model === m).map(c => ({ ...c }));
+  const ms = allModels();
+  $('admModel').innerHTML = ms.map(x => `<option ${x === m ? 'selected' : ''}>${esc(x)}</option>`).join('');
+  $('admCopyFrom').innerHTML = '<option value="">-- คัดลอกจากรุ่นอื่น --</option>' + ms.filter(x => x !== m).map(x => `<option>${esc(x)}</option>`).join('');
+  renderAdmItems();
+}
+function renderAdmItems() {
+  const T = [['choice', 'ตัวเลือก'], ['number', 'ตัวเลข'], ['text', 'ข้อความ']];
+  $('admItems').innerHTML = A.items.length ? A.items.map((it, i) => `
+    <div class="aitem ${it.active ? '' : 'off'}">
+      <div class="arow"><b>ข้อ ${i + 1}</b><span class="sp"></span>
+        <label class="chk"><input type="checkbox" ${it.active ? 'checked' : ''} onchange="A.items[${i}].active=this.checked;this.closest('.aitem').classList.toggle('off',!this.checked)"> ใช้งาน</label>
+        <button class="ibtn" onclick="admMove(${i},-1)">↑</button><button class="ibtn" onclick="admMove(${i},1)">↓</button><button class="ibtn del" onclick="admDel(${i})">✕</button>
+      </div>
+      <label>หมวด<input value="${esc(it.cat)}" oninput="A.items[${i}].cat=this.value"></label>
+      <label>คำถาม<textarea rows="2" oninput="A.items[${i}].q=this.value">${esc(it.q)}</textarea></label>
+      <div class="grid2">
+        <label>ประเภทคำตอบ<select onchange="A.items[${i}].type=this.value;renderAdmItems()">${T.map(([v, l]) => `<option value="${v}" ${it.type === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+        <label>เฉพาะเครื่องที่มี (etc)<input value="${esc(it.cond)}" placeholder="เว้นว่าง = ทุกเครื่อง" oninput="A.items[${i}].cond=this.value"></label>
+      </div>
+      ${it.type === 'choice' ? `<div class="grid2">
+        <label>ตัวเลือกคำตอบ (คั่นด้วย ,)<input value="${esc(it.options)}" oninput="A.items[${i}].options=this.value"></label>
+        <label>คำตอบที่ถือว่าปกติ<input value="${esc(it.normal)}" oninput="A.items[${i}].normal=this.value"></label></div>` : ''}
+      ${it.type === 'number' ? `<div class="grid3">
+        <label>หน่วย<input value="${esc(it.options)}" oninput="A.items[${i}].options=this.value"></label>
+        <label>ค่าต่ำสุด<input type="number" step="any" value="${esc(it.min)}" oninput="A.items[${i}].min=this.value"></label>
+        <label>ค่าสูงสุด<input type="number" step="any" value="${esc(it.max)}" oninput="A.items[${i}].max=this.value"></label></div>` : ''}
+    </div>`).join('') : '<div class="mut">ยังไม่มีรายการตรวจในรุ่นนี้ กด "เพิ่มข้อ" หรือคัดลอกจากรุ่นอื่น</div>';
+}
+function admAdd() {
+  A.items.push({ cat: A.items.at(-1)?.cat || '', q: '', type: 'choice', options: 'ผ่าน,ไม่ผ่าน', normal: 'ผ่าน', min: '', max: '', cond: '', active: true });
+  renderAdmItems();
+  setTimeout(() => $('admItems').lastElementChild?.scrollIntoView({ behavior: 'smooth' }), 50);
+}
+function admMove(i, d) { const j = i + d; if (j < 0 || j >= A.items.length) return; [A.items[i], A.items[j]] = [A.items[j], A.items[i]]; renderAdmItems(); }
+function admDel(i) { if (confirm('ลบข้อนี้?')) { A.items.splice(i, 1); renderAdmItems(); } }
+function admCopy(from) {
+  $('admCopyFrom').value = '';
+  if (!from || !confirm(`แทนที่รายการของรุ่น ${A.model} ด้วยรายการจากรุ่น ${from}?\n(ข้อมูลจะยังไม่ถูกบันทึกจนกว่าจะกดบันทึก)`)) return;
+  A.items = A.checklist.filter(c => c.model === from).map(c => ({ ...c, model: A.model }));
+  renderAdmItems();
+}
+async function admSaveCheck() {
+  const bad = A.items.findIndex(it => !String(it.q).trim());
+  if (bad >= 0) return toast(`ข้อ ${bad + 1} ยังไม่มีคำถาม`, true);
+  loading(true);
+  try {
+    const r = await api({ action: 'saveChecklist', ...A.cred, model: A.model, items: A.items }, true);
+    A.checklist = r.checklist; pickModel(A.model);
+    toast('✓ บันทึก Checklist รุ่น ' + A.model + ' แล้ว');
+    loadAll();
+  } catch (e) { toast(e.message, true); }
+  finally { loading(false); }
+}
+
+/* Machines editor */
+function renderAdmMachines() {
+  const models = [...new Set(A.machines.map(m => m.model).filter(Boolean))];
+  $('admMachList').innerHTML = `<datalist id="modelList">${models.map(m => `<option>${esc(m)}</option>`).join('')}</datalist>` +
+    A.machines.map((m, i) => `<div class="aitem">
+      <div class="arow"><b>${esc(m.code) || 'เครื่องใหม่'}</b><span class="sp"></span>
+        <button class="ibtn del" onclick="if(confirm('ลบเครื่องนี้?')){A.machines.splice(${i},1);renderAdmMachines()}">✕</button></div>
+      <div class="grid2">
+        <label>Code Name<input value="${esc(m.code)}" oninput="A.machines[${i}].code=this.value"></label>
+        <label>No.<input value="${esc(m.no)}" inputmode="numeric" oninput="A.machines[${i}].no=this.value"></label>
+        <label>Provider<input list="provList" value="${esc(m.provider)}" oninput="A.machines[${i}].provider=this.value"></label>
+        <label>Model<input list="modelList" value="${esc(m.model)}" oninput="A.machines[${i}].model=this.value"></label>
+      </div>
+      <label>etc<input value="${esc(m.etc)}" placeholder="เช่น oCm" oninput="A.machines[${i}].etc=this.value"></label>
+    </div>`).join('');
+}
+async function admSaveMachines() {
+  loading(true);
+  try {
+    const r = await api({ action: 'saveMachines', ...A.cred, machines: A.machines }, true);
+    A.machines = r.machines; renderAdmMachines(); pickModel(A.model);
+    toast('✓ บันทึกรายการเครื่องแล้ว'); loadAll();
+  } catch (e) { toast(e.message, true); }
+  finally { loading(false); }
+}
+
+/* Users editor */
+function renderAdmUsers() {
+  $('admUserList').innerHTML = A.users.map((u, i) =>
+    `<div class="urow"><input value="${esc(u)}" placeholder="ชื่อ-นามสกุล" oninput="A.users[${i}]=this.value">
+     <button class="ibtn del" onclick="A.users.splice(${i},1);renderAdmUsers()">✕</button></div>`).join('') || '<div class="mut">ยังไม่มีรายชื่อ</div>';
+}
+async function admSaveUsers() {
+  loading(true);
+  try {
+    const r = await api({ action: 'saveUsers', ...A.cred, users: A.users }, true);
+    A.users = r.users; renderAdmUsers(); toast('✓ บันทึกรายชื่อแล้ว'); loadAll();
+  } catch (e) { toast(e.message, true); }
+  finally { loading(false); }
+}
+
+/* ---------- Start ---------- */
+$('today').textContent = new Date().toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+$('shift').value = defaultShift();
+$('repair').innerHTML = '<option value="">-</option>' + REPAIR.map(r => `<option>${r}</option>`).join('');
+if (API_URL.includes('PASTE_')) {
+  document.querySelector('main').insertAdjacentHTML('afterbegin', '<div class="card note bad">⚠️ ยังไม่ได้ใส่ API_URL ในไฟล์ index.html</div>');
+} else {
+  loadAll();
+}
+</script>
+</body>
+</html>
