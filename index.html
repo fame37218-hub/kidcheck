@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#2563eb">
-<title>เช็คเครื่องฟอกไตประจำวัน</title>
+<title>Daily Check เครื่องฟอกไตประจำวัน รพ.ศรีสงคราม</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 [hidden]{display:none!important}
@@ -115,13 +115,13 @@ details summary::before{content:'▸ '}details[open] summary::before{content:'�
 <body>
 <header>
   <div class="htop">
-    <div><div class="ttl">🩺 เช็คเครื่องฟอกไตประจำวัน</div><div class="sub" id="today"></div></div>
+    <div><div class="ttl">🩺 รายการตรวจสอบเครื่องฟอกไตประจำวัน รพ.ศรีสงคราม</div><div class="sub" id="today"></div></div>
     <button class="hbtn" onclick="loadAll()" title="รีเฟรช">⟳</button>
   </div>
   <nav>
-    <button class="tab active" data-tab="check" onclick="showTab('check')">บันทึกเช็ค</button>
+    <button class="tab active" data-tab="check" onclick="showTab('check')">บันทึกรายการ</button>
     <button class="tab" data-tab="summary" onclick="showTab('summary')">ภาพรวมวันนี้</button>
-    <button class="tab" data-tab="admin" onclick="showTab('admin')">ผู้ดูแล</button>
+    <button class="tab" data-tab="admin" onclick="showTab('admin')">ตั้งค่า</button>
   </nav>
 </header>
 
@@ -131,7 +131,7 @@ details summary::before{content:'▸ '}details[open] summary::before{content:'�
   <div class="card">
     <div class="grid2">
       <label>ผู้บันทึก<select id="recorder"></select></label>
-      <label>กะ<select id="shift"><option>เช้า</option><option>บ่าย</option><option>ดึก</option></select></label>
+      <label>เวร<select id="shift"><option>เช้า</option><option>บ่าย</option><option>ดึก</option></select></label>
     </div>
   </div>
 
@@ -381,7 +381,7 @@ function renderHistory() {
   const row = (k, v) => v ? `<div class="kv"><span>${k}</span><b>${esc(v).replace(/\n/g, '<br>')}</b></div>` : '';
   box.innerHTML = `<h3>📋 บันทึกล่าสุดของเครื่องนี้</h3>
     <div class="hist main">
-      <div class="histhead"><span class="badge ${stCls(L.status)}">${esc(L.status)}</span><span>${esc(L.time)}${L.shift ? ' (กะ' + esc(L.shift) + ')' : ''}</span></div>
+      <div class="histhead"><span class="badge ${stCls(L.status)}">${esc(L.status)}</span><span>${esc(L.time)}${L.shift ? ' (เวร' + esc(L.shift) + ')' : ''}</span></div>
       ${row('ผู้บันทึก', L.recorder)}${row('ข้อที่ผิดปกติ', L.abnormal)}${row('อาการ/สาเหตุ', L.cause)}
       ${row('แจ้งช่าง', L.notified)}${row('วันที่แจ้งช่าง', L.notifyDate)}${row('ช่าง/บริษัท', L.technician)}
       ${row('สถานะการซ่อม', L.repairStatus)}${row('หมายเหตุ', L.note)}
